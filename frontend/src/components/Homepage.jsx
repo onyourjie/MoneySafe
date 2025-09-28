@@ -13,7 +13,7 @@ const Homepage = () => {
           <Link to="#" className="text-base font-bold text-[#383838]">
             Home
           </Link>
-          <Link to="#" className="text-base font-bold text-[#787575]">
+          <Link to="/chart" className="text-base font-bold text-[#787575]">
             Chart
           </Link>
           <Link to="#" className="text-base font-bold text-[#787575]">
@@ -384,10 +384,10 @@ const Homepage = () => {
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
         <div className="flex justify-around">
-          <Link to="#" className="text-base font-bold text-[#383838]">Home</Link>
-          <Link to="#" className="text-base font-bold text-[#787575]">Chart</Link>
-          <Link to="#" className="text-base font-bold text-[#787575]">Budget</Link>
-          <Link to="#" className="text-base font-bold text-[#787575]">Wishlist</Link>
+          <Link to="/homepage" className="text-base font-bold text-[#383838]">Home</Link>
+          <Link to="/chart" className="text-base font-bold text-[#787575]">Chart</Link>
+          <Link to="/budget" className="text-base font-bold text-[#787575]">Budget</Link>
+          <Link to="/wishlist" className="text-base font-bold text-[#787575]">Wishlist</Link>
         </div>
       </nav>
     </div>

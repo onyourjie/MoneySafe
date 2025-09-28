@@ -68,16 +68,16 @@ const Homepage = () => {
           </div>
 
           {/* Hero Image */}
-          <div className="relative flex-shrink-0 w-full lg:w-[347px] h-[396px]">
+          <div className="relative flex-shrink-0 w-full lg:w-[347px] h-[396px] lg:ml-8">
             <div className="absolute inset-0 opacity-60">
-              <div className="absolute w-[333px] h-[396px] bg-[#e84797] rounded-full blur-[150px] transform rotate-180"></div>
-              <div className="absolute w-[206px] h-[217px] bg-[#e7a0cc] rounded-full blur-[40px] transform rotate-180 top-[70px] left-[64px]"></div>
-              <div className="absolute w-[92px] h-[90px] bg-[#c385f5] rounded-full blur-[25px] transform rotate-180 top-[106px] left-[7px]"></div>
+              <div className="absolute w-[333px] h-[396px] bg-[#e84797] rounded-full blur-[150px] transform rotate-180 left-4"></div>
+              <div className="absolute w-[206px] h-[217px] bg-[#e7a0cc] rounded-full blur-[40px] transform rotate-180 top-[70px] left-[84px]"></div>
+              <div className="absolute w-[92px] h-[90px] bg-[#c385f5] rounded-full blur-[25px] transform rotate-180 top-[106px] left-[27px]"></div>
             </div>
             <img
               src="/babi.png"
               alt="Savings illustration"
-              className="absolute top-[34px] left-[4px] w-[339px] h-[339px] shadow-md object-cover"
+              className="absolute top-[34px] left-[24px] w-[339px] h-[339px] shadow-md object-cover"
             />
           </div>
         </section>
@@ -115,19 +115,19 @@ const Homepage = () => {
               <span className="text-[#eeffee] font-bold text-base">Our Features</span>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-8 mb-9">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-9">
               <img
                 src="return_1.png"
                 alt="Investment icon"
-                className="w-[150px] h-[150px] object-cover"
+                className="w-[120px] h-[120px] md:w-[150px] md:h-[150px] object-cover flex-shrink-0"
               />
-              <h2 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-6xl text-center max-w-[704px]">
+              <h2 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-6xl text-center max-w-[704px] px-4">
                 Turn Good Habits into Smart Savings
               </h2>
               <img
                 src="/return_2.png"
                 alt="Investment icon"
-                className="w-[150px] h-[150px] object-cover"
+                className="w-[120px] h-[120px] md:w-[150px] md:h-[150px] object-cover flex-shrink-0"
               />
             </div>
 
@@ -180,9 +180,9 @@ const Homepage = () => {
                 alt="Chart"
                 className="absolute bottom-4 left-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] shadow-md object-cover"
               />
-              <div className="text-right pr-4 pt-4">
+              <div className="text-right pr-4 pt-4 z-10 relative">
                 <h3 className="text-[#383838] font-bold text-4xl md:text-6xl mb-4">Chart</h3>
-                <p className="text-[#383838] text-lg md:text-xl max-w-[287px] mx-auto">
+                <p className="text-[#383838] text-lg md:text-xl max-w-[287px] ml-auto">
                   "Visualize your spending with clear, simple charts."
                 </p>
               </div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 const Homepage = () => {
   return (
     <div className="bg-[#eeffee] min-h-screen relative overflow-hidden">
@@ -32,7 +34,7 @@ const Homepage = () => {
               <span className="text-[#383838] font-bold text-xl">Login</span>
               <div className="h-0.5 bg-[#e84797] shadow-md transform -rotate-[0.106deg]"></div>
             </div>
-            <span className="text-[#383838] font-bold text-xl">Sign in</span>
+            <Link to="/register" className="text-[#383838] font-bold text-xl hover:text-[#e84797] transition-colors">Sign up</Link>
           </div>
         </nav>
 

@@ -79,7 +79,7 @@ const Landingpage = () => {
             <img
               src="/babi.png"
               alt="Savings illustration"
-              className="absolute top-[34px] left-[24px] w-[339px] h-[339px] shadow-md object-cover"
+              className="absolute top-[34px] left-[24px] w-[339px] h-[339px] object-cover"
             />
           </div>
         </section>
@@ -146,7 +146,7 @@ const Landingpage = () => {
               <img
                 src="kucing.png"
                 alt="Save money"
-                className="absolute bottom-4 left-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] shadow-md object-cover"
+                className="absolute bottom-4 left-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] object-cover"
               />
               <div className="text-right pr-4 pt-4">
                 <h3 className="text-[#383838] font-bold text-2xl md:text-4xl mb-4">
@@ -171,7 +171,7 @@ const Landingpage = () => {
               <img
                 src="/wishlist.png"
                 alt="Wishlist"
-                className="absolute bottom-4 right-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] shadow-md object-cover"
+                className="absolute bottom-4 right-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] object-cover"
               />
             </div>
 
@@ -180,7 +180,7 @@ const Landingpage = () => {
               <img
                 src="/image_3.png"
                 alt="Chart"
-                className="absolute bottom-4 left-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] shadow-md object-cover"
+                className="absolute bottom-4 left-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] object-cover"
               />
               <div className="text-right pr-4 pt-4 z-10 relative">
                 <h3 className="text-[#383838] font-bold text-4xl md:text-6xl mb-4">Chart</h3>
@@ -201,7 +201,7 @@ const Landingpage = () => {
               <img
                 src="calculator_1.png"
                 alt="Calculator"
-                className="absolute bottom-4 right-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] shadow-md object-cover"
+                className="absolute bottom-4 right-4 w-[120px] h-[120px] md:w-[264px] md:h-[264px] object-cover"
               />
             </div>
           </div>
@@ -300,7 +300,7 @@ const Landingpage = () => {
               <img
                 src="/finance_2.png"
                 alt="Finance starter"
-                className="w-[176px] h-[176px] shadow-md object-cover"
+                className="w-[176px] h-[176px] object-cover"
               />
 
               <div className="flex flex-col gap-5 w-full max-w-[272px]">
@@ -326,9 +326,9 @@ const Landingpage = () => {
             {/* Elite Plan */}
             <div className="bg-[#94c2da] rounded-lg p-10 flex flex-col items-center gap-10 w-full md:w-[355px] min-h-[546px]">
               <img
-                src="finance_2.png"
+                src="finance_1.png"
                 alt="Finance elite"
-                className="w-[176px] h-[176px] shadow-md object-cover"
+                className="w-[176px] h-[176px] object-cover"
               />
 
               <div className="flex flex-col gap-5 w-full max-w-[272px]">

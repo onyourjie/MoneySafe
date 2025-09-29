@@ -48,6 +48,7 @@ const Homepage = () => {
 
           {/* Profile */}
           <div className="flex items-center gap-2">
+            <span className="hidden md:block text-xl font-bold text-[#383838]">Nina</span>
             <div className="w-[57px] h-[57px] rounded-full overflow-hidden">
               <img
                 src="/profile.svg"
@@ -127,15 +128,24 @@ const Homepage = () => {
       <main className="flex flex-col lg:flex-row gap-8 px-4 md:px-8 lg:px-16">
         {/* Left Sidebar - Budget Section */}
         <aside className="w-full lg:w-[263px] flex flex-col gap-6">
-          {/* Budget Card */}
-          <div className="bg-[#94c2da] rounded-[10px] p-6">
+          {/* Budget Card with Bear */}
+          <div className="bg-[#94c2da] rounded-[10px] p-6 relative">
             <div className="flex flex-col gap-5">
-              <p className="text-sm font-semibold text-[#efe]">Anggaran Bulan Ini</p>
-              <div className="w-full h-[7px] rounded-[60px] bg-[#e2e2e2]"></div>
-              <p className="text-sm text-[#efe]">Total Budget Rp.0</p>
-              <button className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center">
-                <span className="text-sm font-medium text-[#efe]">Edit Budget</span>
-              </button>
+              {/* Bear Image */}
+              <img
+                src="/homepage.svg"
+                alt="Save Money"
+                className="w-[111px] h-[111px] object-cover absolute top-4 right-4"
+              />
+              
+              <div className="pt-20">
+                <p className="text-sm font-semibold text-[#efe]">Anggaran Bulan Ini</p>
+                <div className="w-full h-[7px] rounded-[60px] bg-[#e2e2e2] mt-4"></div>
+                <p className="text-sm text-[#efe] mt-4">Total Budget Rp.0</p>
+                <button className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-4">
+                  <span className="text-sm font-medium text-[#efe]">Edit Budget</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -238,13 +248,6 @@ const Homepage = () => {
                 <span className="text-base font-bold text-[#efe]">Add First Expense</span>
               </button>
             </div>
-
-            {/* Bear Image */}
-            <img
-              src="/homepage.svg"
-              alt="Save Money"
-              className="w-[111px] h-[111px] absolute top-4 left-4 object-cover shadow-md"
-            />
           </div>
 
           {/* Weekly Overview */}

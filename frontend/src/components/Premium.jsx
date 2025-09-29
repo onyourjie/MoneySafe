@@ -81,7 +81,7 @@ const Premium = () => {
             <img
               src="/finance_1.png"
               alt="Finance Starter"
-              className="w-44 h-44 object-cover shadow-md"
+              className="w-44 h-44 object-cover"
             />
             
             <div className="flex flex-col gap-5 w-full max-w-[272px]">
@@ -109,7 +109,7 @@ const Premium = () => {
             <img
               src="/finance_2.png"
               alt="Finance Elite"
-              className="w-44 h-44 object-cover shadow-md"
+              className="w-44 h-44 object-cover"
             />
             
             <div className="flex flex-col gap-5 w-full max-w-[272px]">
@@ -131,7 +131,7 @@ const Premium = () => {
             {/* Choose Plan Button */}
             <button 
               onClick={handleChoosePlan}
-              className="w-[217px] h-14 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-auto hover:bg-[#d63384] transition-colors"
+              className="w-[217px] h-14 bg-[#e84797] rounded-[10px] flex items-center justify-center hover:bg-[#d63384] transition-colors"
             >
               <span className="text-2xl font-bold text-[#efe]">Choose Plan</span>
             </button>

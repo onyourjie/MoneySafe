@@ -102,14 +102,14 @@ const PaymentSuccessModal = ({ isOpen, onClose, email = "nina@gmail.com" }) => {
           <img
             src="/popup.svg"
             alt="Success Cat Left"
-            className="hidden lg:block w-32 h-32 md:w-40 md:h-40 lg:w-[200px] lg:h-[200px] absolute left-4 lg:left-[166.5px] bottom-4 lg:bottom-[32px] object-cover shadow-md"
+            className="hidden lg:block w-32 h-32 md:w-40 md:h-40 lg:w-[200px] lg:h-[200px] absolute left-4 lg:left-[166.5px] bottom-4 lg:bottom-[32px] object-cover"
           />
           
           {/* Right Cat Image */}
           <img
             src="/popup.svg"
             alt="Success Cat Right"
-            className="hidden lg:block w-32 h-32 md:w-40 md:h-40 lg:w-[200px] lg:h-[200px] absolute right-4 lg:right-[166.5px] bottom-4 lg:bottom-[32px] object-cover shadow-md"
+            className="hidden lg:block w-32 h-32 md:w-40 md:h-40 lg:w-[200px] lg:h-[200px] absolute right-4 lg:right-[166.5px] bottom-4 lg:bottom-[32px] object-cover"
           />
         </div>
 

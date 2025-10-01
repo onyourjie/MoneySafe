@@ -1,29 +1,46 @@
-// firebase.js
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage"; 
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
 
-// Config dari Firebase Console (punyamu sendiri)
 const firebaseConfig = {
-  apiKey: "AIzaSyBdekHfK5_kbLmBHDVzf1XZiP-OIof9L24",
-  authDomain: "crud-money.firebaseapp.com",
-  projectId: "crud-money",
-  storageBucket: "crud-money.appspot.com",
-  messagingSenderId: "197875263335",
-  appId: "1:197875263335:web:8e8b7855d8786d344bf1c2",
-  measurementId: "G-PWE4S8GJVS"
-};
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo-project.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:demo123456789",
+}
 
-// Inisialisasi Firebase
-const app = initializeApp(firebaseConfig);
+let app
+let auth
 
-// Export service supaya bisa dipakai di komponen lain
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export function getFirebaseApp() {
+  if (!app) {
+    try {
+      app = initializeApp(firebaseConfig)
+    } catch (error) {
+      console.warn("Firebase initialization failed:", error)
+      console.warn("Please configure your Firebase environment variables in .env file")
+      // Create a mock app for development
+      app = null
+    }
+  }
+  return app
+}
 
-// Function untuk mendapatkan auth instance
 export function getFirebaseAuth() {
-  return auth;
+  if (!auth) {
+    try {
+      const firebaseApp = getFirebaseApp()
+      if (firebaseApp) {
+        auth = getAuth(firebaseApp)
+      } else {
+        console.warn("Firebase not configured properly. Auth features will not work.")
+        return null
+      }
+    } catch (error) {
+      console.warn("Firebase Auth initialization failed:", error)
+      return null
+    }
+  }
+  return auth
 }

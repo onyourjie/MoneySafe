@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "firebase/auth";
+import { updateProfile, sendEmailVerification } from "firebase/auth";
 import { getFirebaseAuth } from "../lib/firebase";
+import { registerUser, signInWithGoogle } from "../lib/authService";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const credential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      const credential = await registerUser(form.email, form.password);
       
       // Update profile with display name
       if (form.name.trim()) {
@@ -76,8 +77,8 @@ export default function Register() {
         console.log("Email verification failed:", emailError);
       }
 
-      // Navigate to dashboard or login
-      navigate("/", { replace: true });
+      // Navigate to homepage
+      navigate("/homepage", { replace: true });
     } catch (firebaseError) {
       console.error("Registration error:", firebaseError);
       
@@ -90,6 +91,31 @@ export default function Register() {
         errorMessage = "Please enter a valid email address.";
       } else if (firebaseError.code === "auth/weak-password") {
         errorMessage = "Password is too weak. Please use a stronger password.";
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      await signInWithGoogle();
+      // Navigate to homepage
+      navigate("/homepage", { replace: true });
+    } catch (googleError) {
+      console.error("Google login error:", googleError);
+      
+      let errorMessage = "Google login failed. Please try again.";
+      
+      if (googleError.code === "auth/popup-closed-by-user") {
+        errorMessage = "Login cancelled by user.";
+      } else if (googleError.code === "auth/popup-blocked") {
+        errorMessage = "Popup blocked. Please allow popups for this site.";
       }
       
       setError(errorMessage);
@@ -154,9 +180,9 @@ export default function Register() {
               Track your spending, plan your budget, and achieve your goals with us.
             </p>
 
-            <button className="bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-colors">
+            <Link to="/homepage" className="inline-block bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-colors">
               Start Managing
-            </button>
+            </Link>
 
             {/* Hero Image for Mobile */}
             <div className="lg:hidden mt-12 flex justify-center">
@@ -254,7 +280,11 @@ export default function Register() {
 
             {/* Social Login Buttons */}
             <div className="flex gap-4 justify-center">
-              <button className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path fill="#F85F5F" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

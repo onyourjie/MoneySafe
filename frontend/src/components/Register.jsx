@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { updateProfile, sendEmailVerification } from "firebase/auth";
 import { getFirebaseAuth } from "../lib/firebase";
 import { registerUser, signInWithGoogle } from "../lib/authService";
+import Swal from 'sweetalert2';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -33,29 +34,95 @@ export default function Register() {
 
     // Check if Firebase is configured
     if (!isFirebaseConfigured) {
-      setError("Firebase is not configured. Please set up your Firebase environment variables.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Configuration Error',
+        text: 'Firebase is not configured. Please set up your Firebase environment variables.',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
       return;
     }
 
     // Validation
     if (!form.name.trim()) {
-      setError("Name is required");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Name Required',
+        text: 'Please enter your name',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
     if (!form.email.trim()) {
-      setError("Email is required");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email Required',
+        text: 'Please enter your email address',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
     if (!form.password) {
-      setError("Password is required");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Password Required',
+        text: 'Please enter a password',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
     if (form.password.length < 6) {
-      setError("Password must be at least 6 characters");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Password Too Short',
+        text: 'Password must be at least 6 characters',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
       return;
     }
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      Swal.fire({
+        icon: 'error',
+        title: 'Passwords Don\'t Match',
+        text: 'Please make sure both passwords are the same',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
       return;
     }
 
@@ -77,6 +144,22 @@ export default function Register() {
         console.log("Email verification failed:", emailError);
       }
 
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: `Welcome to MoneySafe, ${form.name}!`,
+        confirmButtonColor: '#e84797',
+        timer: 2000,
+        showConfirmButton: false,
+        showClass: {
+          popup: 'animate__animated animate__bounceIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__bounceOut'
+        }
+      });
+
       // Navigate to homepage
       navigate("/homepage", { replace: true });
     } catch (firebaseError) {
@@ -93,7 +176,18 @@ export default function Register() {
         errorMessage = "Password is too weak. Please use a stronger password.";
       }
       
-      setError(errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: errorMessage,
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -105,6 +199,23 @@ export default function Register() {
     
     try {
       await signInWithGoogle();
+      
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Welcome!',
+        text: 'Google registration successful!',
+        confirmButtonColor: '#e84797',
+        timer: 2000,
+        showConfirmButton: false,
+        showClass: {
+          popup: 'animate__animated animate__bounceIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__bounceOut'
+        }
+      });
+      
       // Navigate to homepage
       navigate("/homepage", { replace: true });
     } catch (googleError) {
@@ -118,7 +229,18 @@ export default function Register() {
         errorMessage = "Popup blocked. Please allow popups for this site.";
       }
       
-      setError(errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: errorMessage,
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -127,34 +249,36 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-[#eeffee] relative overflow-hidden">
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 md:px-8 lg:px-16 py-8">
+      <header className="relative z-10 flex items-center justify-between px-4 md:px-8 lg:px-16 py-8 animate__animated animate__fadeInDown">
         {/* Logo */}
-        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 rounded-full transform transition-all duration-300 hover:scale-110 hover:rotate-180 animate__animated animate__bounceIn"></div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-16">
+        <nav className="hidden md:flex items-center gap-16 animate__animated animate__fadeInDown animate__delay-1s">
           <div className="flex gap-16">
-            <Link to="/" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <Link to="/" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Home
             </Link>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Chart
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Budget
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Wishlist
             </a>
           </div>
 
           {/* Auth Section */}
           <div className="flex items-center gap-4">
-            <Link to="/login" className="flex flex-col">
+            <Link to="/login" className="flex flex-col transform transition-all duration-300 hover:scale-105">
               <span className="text-[#383838] font-bold text-xl hover:text-[#e84797] transition-colors">Login</span>
-              <div className="h-0.5 bg-[#e84797] shadow-md transform -rotate-[0.106deg]"></div>
             </Link>
-            <span className="text-[#383838] font-bold text-xl">Sign Up</span>
+            <div className="flex flex-col">
+              <span className="text-[#383838] font-bold text-xl">Sign Up</span>
+              <div className="h-0.5 bg-[#e84797] shadow-md transform -rotate-[0.106deg] animate__animated animate__pulse animate__infinite"></div>
+            </div>
           </div>
         </nav>
 
@@ -167,40 +291,45 @@ export default function Register() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 px-4 md:px-8 lg:px-16 pb-24">
+      <main className="relative z-10 px-4 md:px-8 lg:px-16 pb-24 animate__animated animate__fadeInUp animate__delay-1s">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 min-h-[600px]">
           
           {/* Left Side - Hero Content */}
-          <div className="flex-1 max-w-[600px] text-center lg:text-left lg:pr-8">
-            <h1 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-[55px] mb-8 leading-tight">
-              Manage your money, grow your future
+          <div className="flex-1 max-w-[600px] text-center lg:text-left lg:pr-8 animate__animated animate__slideInLeft animate__delay-2s">
+            <h1 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-[55px] mb-8 leading-tight transform transition-all duration-300 hover:scale-105">
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">Manage</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">your</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">money,</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">grow</span>{' '}
+              <span className="text-[#e84797] inline-block transform hover:rotate-3 hover:text-[#383838] transition-all duration-300 animate__animated animate__pulse animate__infinite">your</span>{' '}
+              <span className="text-[#e84797] inline-block transform hover:rotate-3 hover:text-[#383838] transition-all duration-300 animate__animated animate__pulse animate__infinite">future</span>
             </h1>
             
-            <p className="text-[#383838] text-lg md:text-xl mb-12 max-w-[360px] mx-auto lg:mx-0">
+            <p className="text-[#383838] text-lg md:text-xl mb-12 max-w-[360px] mx-auto lg:mx-0 transform transition-all duration-300 hover:text-[#e84797] hover:scale-105">
               Track your spending, plan your budget, and achieve your goals with us.
             </p>
 
-            <Link to="/homepage" className="inline-block bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-colors">
+            <Link to="/register" className="inline-block bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-all duration-300 transform hover:scale-110 hover:shadow-xl animate__animated animate__bounce animate__infinite animate__slow">
               Start Managing
             </Link>
 
             {/* Hero Image for Mobile */}
-            <div className="lg:hidden mt-12 flex justify-center">
+            <div className="lg:hidden mt-12 flex justify-center animate__animated animate__fadeIn animate__delay-3s">
               <div className="relative">
-                <div className="w-[300px] h-[300px] bg-[#e84797]/[0.38] rounded-full"></div>
+                <div className="w-[300px] h-[300px] bg-[#e84797]/[0.38] rounded-full animate__animated animate__pulse animate__infinite"></div>
                 <img
                   src="/naik.svg"
                   alt="Financial illustration"
-                  className="absolute top-0 left-0 w-[300px] h-[300px] object-cover"
+                  className="absolute top-0 left-0 w-[300px] h-[300px] object-contain transform transition-all duration-300 hover:scale-110 hover:rotate-3 animate__animated animate__bounce animate__infinite animate__slow"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Side - Registration Form */}
-          <div className="w-full lg:w-auto lg:min-w-[400px] bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8 lg:p-10 relative z-20 lg:ml-8">
-            <h2 className="text-2xl font-bold text-[#e84797] mb-2">Join MoneySafe!</h2>
-            <p className="text-sm font-medium text-black mb-8">Create your account to start managing your finances</p>
+          <div className="w-full lg:w-auto lg:min-w-[400px] bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8 lg:p-10 relative z-20 lg:ml-8 transform transition-all duration-300 hover:shadow-2xl hover:scale-105 animate__animated animate__slideInRight animate__delay-2s">
+            <h2 className="text-2xl font-bold text-[#e84797] mb-2 animate__animated animate__fadeInDown animate__delay-3s">Join MoneySafe!</h2>
+            <p className="text-sm font-medium text-black mb-8 animate__animated animate__fadeInDown animate__delay-3s">Create your account to start managing your finances</p>
 
             {error && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
@@ -265,25 +394,29 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-[#e84797] text-white text-xl font-bold rounded-lg shadow-lg hover:bg-[#d63d87] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-14 bg-[#e84797] text-white text-[32px] font-bold rounded-lg shadow-lg hover:bg-[#d63d87] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 hover:shadow-xl animate__animated animate__fadeInUp animate__delay-4s"
               >
-                {loading ? "Creating Account..." : "Sign Up"}
+                {loading ? (
+                  <span className="animate__animated animate__pulse animate__infinite">Creating Account...</span>
+                ) : (
+                  "Sign Up"
+                )}
               </button>
             </form>
 
             {/* Social Login Divider */}
-            <div className="flex items-center justify-center gap-4 my-6">
+            <div className="flex items-center justify-center gap-4 my-6 animate__animated animate__fadeIn animate__delay-5s">
               <div className="flex-1 h-px bg-[#e32d2d]/60"></div>
               <span className="text-sm font-light text-black">Or connect with</span>
               <div className="flex-1 h-px bg-[#e32d2d]/60"></div>
             </div>
 
             {/* Social Login Buttons */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center animate__animated animate__bounceIn animate__delay-5s">
               <button 
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110 hover:shadow-xl"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path fill="#F85F5F" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -293,13 +426,13 @@ export default function Register() {
                 </svg>
               </button>
               
-              <button className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <button className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all duration-300 transform hover:scale-110 hover:shadow-xl">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="black">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
               </button>
               
-              <button className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <button className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all duration-300 transform hover:scale-110 hover:shadow-xl">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#0047FF">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
@@ -310,7 +443,7 @@ export default function Register() {
             <div className="text-center mt-6">
               <p className="text-sm text-black">
                 Already have an account?{" "}
-                <Link to="/login" className="text-[#e84797] font-bold hover:underline">
+                <Link to="/login" className="text-[#e84797] font-bold hover:underline transform transition-all duration-300 hover:scale-105">
                   Sign In
                 </Link>
               </p>
@@ -318,9 +451,9 @@ export default function Register() {
           </div>
 
           {/* Hero Image for Desktop (Behind form) */}
-          <div className="hidden lg:block absolute left-[8%] top-[20%] -z-10">
+          <div className="hidden lg:block absolute left-[8%] top-[20%] -z-10 animate__animated animate__fadeIn animate__delay-3s">
             <div className="relative">
-              <div className="w-[350px] h-[350px] bg-[#e84797]/[0.25] rounded-full"></div>
+              <div className="w-[350px] h-[350px] bg-[#e84797]/[0.25] rounded-full animate__animated animate__pulse animate__infinite"></div>
               <img
                 src="/naik.svg"
                 alt="Financial illustration"

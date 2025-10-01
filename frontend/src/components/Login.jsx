@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, resetPassword, signInWithGoogle } from "../lib/authService";
+import Swal from 'sweetalert2';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -22,16 +23,49 @@ export default function Login() {
 
   const handleForgotPassword = async () => {
     if (!form.email.trim()) {
-      setError("Please enter your email address first");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email Required',
+        text: 'Please enter your email address first',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
 
     try {
       await resetPassword(form.email);
-      alert("Password reset email sent! Check your inbox.");
+      Swal.fire({
+        icon: 'success',
+        title: 'Reset Link Sent!',
+        text: 'Password reset email sent! Check your inbox.',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__bounceIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__bounceOut'
+        }
+      });
     } catch (resetError) {
       console.error("Password reset error:", resetError);
-      setError("Failed to send password reset email");
+      Swal.fire({
+        icon: 'error',
+        title: 'Reset Failed',
+        text: 'Failed to send password reset email',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
     }
   };
 
@@ -41,6 +75,21 @@ export default function Login() {
     
     try {
       await signInWithGoogle();
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Welcome!',
+        text: 'Google login successful!',
+        confirmButtonColor: '#e84797',
+        timer: 2000,
+        showConfirmButton: false,
+        showClass: {
+          popup: 'animate__animated animate__bounceIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__bounceOut'
+        }
+      });
       // Navigate to homepage
       navigate("/homepage", { replace: true });
     } catch (googleError) {
@@ -48,13 +97,24 @@ export default function Login() {
       
       let errorMessage = "Google login failed. Please try again.";
       
-      if (googleError.code === "auth/popup-closed-by-user") {
-        errorMessage = "Login cancelled by user.";
-      } else if (googleError.code === "auth/popup-blocked") {
-        errorMessage = "Popup blocked. Please allow popups for this site.";
+      if (googleError.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Login cancelled by user";
+      } else if (googleError.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
       }
       
-      setError(errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: errorMessage,
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -66,17 +126,55 @@ export default function Login() {
 
     // Validation
     if (!form.email.trim()) {
-      setError("Email is required");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email Required',
+        text: 'Please enter your email address',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
     if (!form.password) {
-      setError("Password is required");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Password Required',
+        text: 'Please enter your password',
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      });
       return;
     }
 
     setLoading(true);
     try {
       await loginUser(form.email, form.password);
+      
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Welcome Back!',
+        text: 'Login successful!',
+        confirmButtonColor: '#e84797',
+        timer: 2000,
+        showConfirmButton: false,
+        showClass: {
+          popup: 'animate__animated animate__bounceIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__bounceOut'
+        }
+      });
       
       // Navigate to homepage
       navigate("/homepage", { replace: true });
@@ -96,7 +194,18 @@ export default function Login() {
         errorMessage = "This account has been disabled.";
       }
       
-      setError(errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: errorMessage,
+        confirmButtonColor: '#e84797',
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -105,39 +214,39 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#eeffee] relative overflow-hidden">
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 md:px-8 lg:px-16 py-8">
+      <header className="relative z-10 flex items-center justify-between px-4 md:px-8 lg:px-16 py-8 animate__animated animate__fadeInDown">
         {/* Logo */}
-        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 rounded-full transform transition-all duration-300 hover:scale-110 hover:rotate-180 animate__animated animate__bounceIn"></div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-16">
+        <nav className="hidden md:flex items-center gap-16 animate__animated animate__fadeInDown animate__delay-1s">
           <div className="flex gap-16">
-            <Link to="/" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <Link to="/" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Home
             </Link>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Chart
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Budget
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base hover:text-[#e84797] transition-colors">
+            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
               Wishlist
             </a>
           </div>
 
           {/* Auth Section */}
           <div className="flex items-center gap-4">
-            <div className="flex flex-col">
+            <div className="flex flex-col transform transition-all duration-300 hover:scale-105">
               <span className="text-[#383838] font-bold text-xl">Login</span>
-              <div className="h-0.5 bg-[#e84797] shadow-md transform -rotate-[0.106deg]"></div>
+              <div className="h-0.5 bg-[#e84797] shadow-md transform -rotate-[0.106deg] animate__animated animate__pulse animate__infinite"></div>
             </div>
-            <Link to="/register" className="text-[#383838] font-bold text-xl hover:text-[#e84797] transition-colors">Sign up</Link>
+            <Link to="/register" className="text-[#383838] font-bold text-xl hover:text-[#e84797] transition-all duration-300 transform hover:scale-110 hover:rotate-3">Sign up</Link>
           </div>
         </nav>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden text-[#383838]">
+        <button className="md:hidden text-[#383838] transform transition-all duration-300 hover:scale-110 hover:rotate-90">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -145,43 +254,48 @@ export default function Login() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 px-4 md:px-8 lg:px-16 pb-24">
+      <main className="relative z-10 px-4 md:px-8 lg:px-16 pb-24 animate__animated animate__fadeInUp animate__delay-1s">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 min-h-[600px]">
           
           {/* Left Side - Hero Content */}
-          <div className="flex-1 max-w-[600px] text-center lg:text-left lg:pr-8">
-            <h1 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-[55px] mb-8 leading-tight">
-              Manage your money, grow your future
+          <div className="flex-1 max-w-[600px] text-center lg:text-left lg:pr-8 animate__animated animate__slideInLeft animate__delay-2s">
+            <h1 className="text-[#383838] font-bold text-4xl md:text-5xl lg:text-[55px] mb-8 leading-tight transform transition-all duration-300 hover:scale-105">
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">Manage</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">your</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">money,</span>{' '}
+              <span className="inline-block transform hover:rotate-3 hover:text-[#e84797] transition-all duration-300">grow</span>{' '}
+              <span className="text-[#e84797] inline-block transform hover:rotate-3 hover:text-[#383838] transition-all duration-300 animate__animated animate__pulse animate__infinite">your</span>{' '}
+              <span className="text-[#e84797] inline-block transform hover:rotate-3 hover:text-[#383838] transition-all duration-300 animate__animated animate__pulse animate__infinite">future</span>
             </h1>
             
-            <p className="text-[#383838] text-lg md:text-xl mb-12 max-w-[360px] mx-auto lg:mx-0">
+            <p className="text-[#383838] text-lg md:text-xl mb-12 max-w-[360px] mx-auto lg:mx-0 transform transition-all duration-300 hover:text-[#e84797] hover:scale-105">
               Track your spending, plan your budget, and achieve your goals with us.
             </p>
 
-            <Link to="/homepage" className="inline-block bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-colors">
+            <Link to="/login" className="inline-block bg-[#4e7cb2] text-[#eeffee] font-bold text-xl md:text-2xl px-8 py-4 rounded-lg shadow-lg hover:bg-[#3d6399] transition-all duration-300 transform hover:scale-110 hover:shadow-xl animate__animated animate__bounce animate__infinite animate__slow">
               Start Managing
             </Link>
 
             {/* Hero Image for Mobile */}
-            <div className="lg:hidden mt-12 flex justify-center">
+            <div className="lg:hidden mt-12 flex justify-center animate__animated animate__fadeIn animate__delay-3s">
               <div className="relative">
-                <div className="w-[300px] h-[300px] bg-[#e84797]/[0.38] rounded-full"></div>
+                <div className="w-[300px] h-[300px] bg-[#e84797]/[0.38] rounded-full animate__animated animate__pulse animate__infinite"></div>
                 <img
                   src="/naik.svg"
                   alt="Financial illustration"
-                  className="absolute top-0 left-0 w-[300px] h-[300px] object-contain"
+                  className="absolute top-0 left-0 w-[300px] h-[300px] object-contain transform transition-all duration-300 hover:scale-110 hover:rotate-3 animate__animated animate__bounce animate__infinite animate__slow"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Side - Login Form */}
-          <div className="w-full lg:w-auto lg:min-w-[400px] bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8 lg:p-10 relative z-20 lg:ml-8">
-            <h2 className="text-2xl font-bold text-[#e84797] mb-2">Join Us!</h2>
-            <p className="text-sm font-medium text-black mb-8">Fill this form to create an account</p>
+          <div className="w-full lg:w-auto lg:min-w-[400px] bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-8 lg:p-10 relative z-20 lg:ml-8 transform transition-all duration-300 hover:shadow-2xl hover:scale-105 animate__animated animate__slideInRight animate__delay-2s">
+            <h2 className="text-2xl font-bold text-[#e84797] mb-2 animate__animated animate__fadeInDown animate__delay-3s">Join Us!</h2>
+            <p className="text-sm font-medium text-black mb-8 animate__animated animate__fadeInDown animate__delay-3s">Fill this form to create an account</p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm animate__animated animate__shakeX">
                 {error}
               </div>
             )}
@@ -235,7 +349,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-sm font-bold text-black hover:text-[#e84797] transition-colors"
+                  className="text-sm font-bold text-black hover:text-[#e84797] transition-all duration-300 transform hover:scale-110"
                 >
                   Forgot Password?
                 </button>
@@ -245,25 +359,29 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-[#e84797] text-white text-[32px] font-bold rounded-lg shadow-lg hover:bg-[#d63d87] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-14 bg-[#e84797] text-white text-[32px] font-bold rounded-lg shadow-lg hover:bg-[#d63d87] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 hover:shadow-xl animate__animated animate__fadeInUp animate__delay-4s"
               >
-                {loading ? "Logging in..." : "Log in"}
+                {loading ? (
+                  <span className="animate__animated animate__pulse animate__infinite">Logging in...</span>
+                ) : (
+                  "Log in"
+                )}
               </button>
             </form>
 
             {/* Social Login Divider */}
-            <div className="flex items-center justify-center gap-4 my-6">
+            <div className="flex items-center justify-center gap-4 my-6 animate__animated animate__fadeIn animate__delay-5s">
               <div className="flex-1 h-px bg-[#e32d2d]/60"></div>
               <span className="text-sm font-light text-black">Or connect with</span>
               <div className="flex-1 h-px bg-[#e32d2d]/60"></div>
             </div>
 
             {/* Social Login Buttons */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center animate__animated animate__bounceIn animate__delay-5s">
               <button 
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-16 h-16 bg-[#fdf5f5] rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110 hover:shadow-xl"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path fill="#F85F5F" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

@@ -89,7 +89,7 @@ const Landingpage = () => {
             </h1>
 
             <p className="text-[#383838] text-lg md:text-xl mb-10 max-w-[527px] leading-relaxed transform transition-all duration-300 hover:scale-105 hover:text-[#e84797]">
-              Track your money with ease. [Name] helps you log daily expenses, plan your monthly budget, and keep track
+              Track your money with ease. Moneyers, helps you log daily expenses, plan your monthly budget, and keep track
               of your savings goals.
             </p>
 

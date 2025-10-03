@@ -5,6 +5,7 @@ import Login from "./components/Login"
 import Landingpage from "./components/Landingpage"
 import Premium from "./components/Premium"
 import Chart from "./components/chart"
+import Wishlist from "./components/Wishlist"
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/premium" element={<Premium />} />
         <Route path="/chart" element={<Chart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
       </Routes>
     </BrowserRouter>
   )

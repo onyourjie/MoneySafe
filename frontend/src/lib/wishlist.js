@@ -66,10 +66,13 @@ export async function deleteWishlist(id, imageUrl) {
 import { supabase } from "./supabase";
 
 // READ (ambil semua data)
-export async function getWishlists() {
+export async function getWishlists(userId) {
+  if (!userId) throw new Error("User ID is required");
+  
   const { data, error } = await supabase
     .from("wishlist")
     .select("*")
+    .eq("user_id", userId)
     .order("start_date", { ascending: false });
 
   if (error) throw error;
@@ -102,6 +105,8 @@ export async function addWishlist(item, file) {
     imageUrl = publicUrl;
   }
 
+  if (!item.user_id) throw new Error("User ID is required");
+
   const { error } = await supabase.from("wishlist").insert([
     {
       name: item.name,
@@ -112,6 +117,7 @@ export async function addWishlist(item, file) {
       start_date: new Date(),
       end_date: null,
       image_url: imageUrl,
+      user_id: item.user_id,
     },
   ]);
 
@@ -152,19 +158,24 @@ export async function updateWishlist(id, updatedData, file) {
     imageUrl = publicUrl;
   }
 
+  if (!updatedData.user_id) throw new Error("User ID is required");
+
   const { error } = await supabase
     .from("wishlist")
     .update({
       ...updatedData,
       image_url: imageUrl,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", updatedData.user_id);
 
   if (error) throw error;
 }
 
 // DELETE (hapus wishlist + gambar)
-export async function deleteWishlist(id, imageUrl) {
+export async function deleteWishlist(id, imageUrl, userId) {
+  if (!userId) throw new Error("User ID is required");
+  
   // Hapus gambar dari storage jika ada
   if (imageUrl) {
     const path = extractPathFromUrl(imageUrl);
@@ -180,7 +191,11 @@ export async function deleteWishlist(id, imageUrl) {
   }
 
   // hapus data dari database
-  const { error } = await supabase.from("wishlist").delete().eq("id", id);
+  const { error } = await supabase
+    .from("wishlist")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId); // Pastikan hanya pemilik yang bisa menghapus
   if (error) throw error;
 }
 

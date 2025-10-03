@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { addWishlist, getWishlists, deleteWishlist, updateWishlist } from "../lib/wishlist";
 import { addSaving, getSavingsByWishlist, deleteSaving } from "../lib/saving";
+import { auth } from "../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Wishlist = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [wishlists, setWishlists] = useState([]);
   const [formData, setFormData] = useState({
     id: null,
@@ -20,12 +24,26 @@ const Wishlist = () => {
   const [showSavingsModal, setShowSavingsModal] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchData();
+      } else {
+        navigate("/login");
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   async function fetchData() {
     try {
-      const data = await getWishlists();
+      const userId = auth.currentUser?.uid;
+      console.log("User ID:", userId); // Tambahkan ini untuk melihat ID
+      if (!userId) {
+        throw new Error("User not logged in");
+      }
+      const data = await getWishlists(userId);
       setWishlists(data);
     } catch (err) {
       console.error("Failed to load wishlists:", err);
@@ -52,6 +70,11 @@ const Wishlist = () => {
     Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading() });
 
     try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        throw new Error("User not logged in");
+      }
+
       if (formData.id) {
         await updateWishlist(formData.id, {
           name: formData.name,
@@ -59,6 +82,7 @@ const Wishlist = () => {
           type: formData.type,
           daily_saving: Number(formData.daily_saving),
           image_url: formData.image_url,
+          user_id: userId,
         }, formData.file);
         Swal.fire("Updated!", "Wishlist updated successfully 🎉", "success");
       } else {
@@ -68,6 +92,7 @@ const Wishlist = () => {
             target: Number(formData.target),
             type: formData.type,
             daily_saving: Number(formData.daily_saving),
+            user_id: userId,
           },
           formData.file
         );
@@ -94,7 +119,11 @@ const Wishlist = () => {
 
     if (result.isConfirmed) {
       try {
-        await deleteWishlist(id, imageUrl);
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+          throw new Error("User not logged in");
+        }
+        await deleteWishlist(id, imageUrl, userId);
         setWishlists(wishlists.filter((item) => item.id !== id));
         Swal.fire("Deleted!", "Wishlist removed.", "success");
       } catch (err) {
@@ -190,8 +219,14 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <div className="flex justify-between items-center w-full px-6 py-4 shadow bg-white">
+      {loading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E84797]"></div>
+        </div>
+      ) : (
+        <>
+          {/* Navbar */}
+          <div className="flex justify-between items-center w-full px-6 py-4 shadow bg-white">
         <Link to="/homepage" className="font-bold text-[#383838] hover:text-[#E84797]">Home</Link>
         <h1 className="text-2xl font-bold text-[#383838]">Wishlist</h1>
         <Link to="/profile" className="font-bold text-[#383838] hover:text-[#E84797]">Profile</Link>
@@ -318,6 +353,8 @@ const Wishlist = () => {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

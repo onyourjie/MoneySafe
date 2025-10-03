@@ -783,9 +783,9 @@ const Homepage = () => {
                   <p className={`text-sm mt-4 font-semibold ${total >= 0 ? 'text-[#efe]' : 'text-[#ffcccb]'}`}>
                     Sisa Budget Rp{total.toLocaleString()}
                   </p>
-                  <button className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-4 hover:bg-[#d63d87] transition-colors">
+                  <Link to="/budget" className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-4 hover:bg-[#d63d87] transition-colors">
                     <span className="text-sm font-medium text-[#efe]">Edit Budget</span>
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

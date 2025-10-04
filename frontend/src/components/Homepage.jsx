@@ -16,7 +16,6 @@ const Homepage = () => {
     date: '',
     category: ''
   });
-  
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showDateActivitiesModal, setShowDateActivitiesModal] = useState(false);
@@ -67,7 +66,7 @@ const Homepage = () => {
   
   const firstDayOfMonth = (date) => {
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    return firstDay === 0 ? 6 : firstDay - 1; // Convert Sunday (0) to be last (6), and make Monday = 0
+    return firstDay === 0 ? 6 : firstDay - 1; // konversi Minggu (0) ke 6, dan buat Senin = 0
   };
   
   const generateCalendarDays = () => {
@@ -78,12 +77,12 @@ const Homepage = () => {
     
     const days = [];
     
-    // Add empty cells for days before the first day of month
+    // tambah sel kosong untuk hari sebelum hari pertama bulan ini
     for (let i = 0; i < startDay; i++) {
       days.push(null);
     }
     
-    // Add days of the month
+    // Tambahkan hari-hari dalam bulan
     for (let day = 1; day <= totalDays; day++) {
       const isToday = isCurrentMonth && day === today.getDate();
       days.push({ day, isToday });
@@ -212,11 +211,11 @@ const Homepage = () => {
 
   const { totalIncome, totalExpense, total } = calculateTotals();
 
-  // Calculate monthly data for the current calendar month
+  // hitung data bulanan
   const calculateMonthlyData = () => {
     const userTransactions = transactions.filter(t => t.userId === user?.uid);
     
-    // Filter transactions for the current calendar month/year
+    // filter transaksi untuk bulan/tahun kalender saat ini
     const monthTransactions = userTransactions.filter(transaction => {
       const transactionDate = new Date(transaction.date);
       return transactionDate.getMonth() === currentDate.getMonth() && 
@@ -233,14 +232,14 @@ const Homepage = () => {
     
     const monthlyTotal = monthlyIncome - monthlyExpense;
     
-    // Calculate expense percentage of income
+    // hitung persentase pengeluaran dari pemasukan
     const expensePercentage = monthlyIncome > 0 ? (monthlyExpense / monthlyIncome) * 100 : 0;
     
     return { 
       monthlyIncome, 
       monthlyExpense, 
       monthlyTotal, 
-      expensePercentage: Math.min(expensePercentage, 100) // Cap at 100%
+      expensePercentage: Math.min(expensePercentage, 100) 
     };
   };
 
@@ -251,7 +250,7 @@ const Homepage = () => {
       setUser(currentUser);
     });
 
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe(); 
   }, []);
 
   // Load transactions when user changes
@@ -418,12 +417,12 @@ const Homepage = () => {
       });
 
       if (!result.isConfirmed) {
-        return; // User cancelled, don't proceed
+        return; // kalou user batal, jangan lanjutkan transaksi
       }
     }
 
     try {
-      // Create transaction object with proper formatting
+      // buat objek transaksi
       const transactionData = {
         name: transactionForm.name,
         type: transactionForm.type,
@@ -434,13 +433,12 @@ const Homepage = () => {
       };
 
       if (isEditMode && editingTransaction) {
-        // Update existing transaction
+        // update data transaksi
         transactionData.updatedAt = new Date().toISOString();
         
         console.log('Updating transaction:', editingTransaction.id, transactionData);
         await updateTransaction(editingTransaction.id, transactionData);
         
-        // Reload transactions to update the UI
         await loadTransactions();
 
         Swal.fire({
@@ -461,17 +459,17 @@ const Homepage = () => {
           }
         });
       } else {
-        // Add new transaction
+        // Tambahkan transaksi baru
         transactionData.createdAt = new Date().toISOString();
         
         console.log('Adding transaction to Firebase:', transactionData);
         const docRef = await addTransaction(transactionData);
         console.log('Transaction added with ID:', docRef.id);
 
-        // Reload transactions to update the UI
+        // reload transaksi untuk update UI
         await loadTransactions();
 
-        // Show success message with transaction details and balance update
+        // tampilkan pesan sukses dengan detail transaksi dan update saldo
         const newBalance = transactionForm.type === 'expense' ? 
           total - parseInt(transactionForm.amount) : 
           total + parseInt(transactionForm.amount);
@@ -516,8 +514,18 @@ const Homepage = () => {
   };
   return (
     <div className="w-full min-h-screen bg-[#efe] overflow-hidden">
+      {/* Mobile Navigation - Top */}
+      <nav className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 z-50 shadow-sm">
+        <div className="flex justify-around">
+          <Link to="/homepage" className="text-sm font-bold text-[#383838]">Home</Link>
+          <Link to="/chart" className="text-sm font-bold text-[#787575]">Chart</Link>
+          <Link to="/budget" className="text-sm font-bold text-[#787575]">Budget</Link>
+          <Link to="/wishlist" className="text-sm font-bold text-[#787575]">Wishlist</Link>
+        </div>
+      </nav>
+
       {/* Header */}
-      <header className="flex justify-between items-center px-4 md:px-8 lg:px-16 py-4 animate__animated animate__fadeInDown">
+      <header className="flex justify-between items-center px-4 md:px-8 lg:px-16 py-4 mt-14 md:mt-0 animate__animated animate__fadeInDown">
         {/* Logo */}
         <div className="w-[174px] h-12 bg-[#d9d9d9] rounded transform transition-all duration-300 hover:scale-110 hover:rotate-3 animate__animated animate__bounceIn"></div>
 
@@ -667,90 +675,94 @@ const Homepage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 md:px-8 lg:px-16">
-        {/* Stats Cards - Top Section */}
+      <main className="px-4 md:px-8 lg:px-16 pb-20 md:pb-8">
+        {/* Stats Cards - Top Section with animations */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {/* Total Card */}
-          <div className="bg-[#e3efe3] rounded-[10px] p-4 flex flex-col items-center justify-center h-[124px]">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-gradient-to-br from-[#e3efe3] to-[#d0e8d0] rounded-xl p-4 flex flex-col items-center justify-center h-[124px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-slideUp cursor-pointer group">
+            <div className="flex items-center gap-2 mb-2 group-hover:scale-110 transition-transform duration-300">
               <svg
                 width={15}
                 height={15}
                 viewBox="0 0 15 15"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-[14.51px] h-[14.51px]"
+                className="w-[14.51px] h-[14.51px] group-hover:animate-bounce"
               >
                 <path
                   d="M6.23895 9.67406V4.83708C6.23895 4.51637 6.36635 4.20879 6.59313 3.98201C6.81991 3.75524 7.12749 3.62783 7.4482 3.62783H12.8898V3.02321C12.8898 2.35813 12.3456 1.81396 11.6806 1.81396H3.21584C2.89513 1.81396 2.58755 1.94137 2.36077 2.16814C2.13399 2.39492 2.00659 2.7025 2.00659 3.02321V11.4879C2.00659 11.8086 2.13399 12.1162 2.36077 12.343C2.58755 12.5698 2.89513 12.6972 3.21584 12.6972H11.6806C12.3456 12.6972 12.8898 12.153 12.8898 11.4879V10.8833H7.4482C7.12749 10.8833 6.81991 10.7559 6.59313 10.5291C6.36635 10.3024 6.23895 9.99477 6.23895 9.67406ZM8.05282 4.83708C7.72028 4.83708 7.4482 5.10916 7.4482 5.4417V9.06944C7.4482 9.40198 7.72028 9.67406 8.05282 9.67406H13.4944V4.83708H8.05282ZM9.86669 8.1625C9.36485 8.1625 8.95975 7.75741 8.95975 7.25557C8.95975 6.75373 9.36485 6.34864 9.86669 6.34864C10.3685 6.34864 10.7736 6.75373 10.7736 7.25557C10.7736 7.75741 10.3685 8.1625 9.86669 8.1625Z"
                   fill="#C5C1C1"
                 />
               </svg>
-              <span className="text-sm font-semibold text-[#c5c1c1]">Total</span>
+              <span className="text-sm font-semibold text-[#8a8585]">Total</span>
             </div>
-            <p className={`text-sm font-semibold ${total >= 0 ? 'text-[#3aa233]' : 'text-[#e65252]'}`}>
+            <p className={`text-lg font-bold transition-all duration-300 group-hover:scale-110 ${total >= 0 ? 'text-[#3aa233]' : 'text-[#e65252]'}`}>
               Rp{total.toLocaleString()}
             </p>
+            <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-[#3aa233] to-[#22c55e] transition-all duration-500 rounded-b-xl"></div>
           </div>
 
           {/* Income Card */}
-          <div className="bg-[#e3efe3] rounded-[10px] p-4 flex flex-col items-center justify-center h-[124px]">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-gradient-to-br from-[#d4f4dd] to-[#c1f0c6] rounded-xl p-4 flex flex-col items-center justify-center h-[124px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-slideUp cursor-pointer group" style={{ animationDelay: '0.1s' }}>
+            <div className="flex items-center gap-2 mb-2 group-hover:scale-110 transition-transform duration-300">
               <svg
                 width={10}
                 height={12}
                 viewBox="0 0 10 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="group-hover:animate-bounce"
               >
                 <path
                   d="M4.96635 0.170516L0.689219 4.51461C0.604853 4.60029 0.53793 4.70202 0.49227 4.81397C0.44661 4.92593 0.423108 5.04592 0.423105 5.1671C0.423103 5.28829 0.446599 5.40828 0.492254 5.52024C0.537909 5.6322 0.604828 5.73393 0.689189 5.81962C0.773551 5.90531 0.873703 5.97328 0.983928 6.01966C1.09415 6.06603 1.21229 6.0899 1.3316 6.08991C1.45091 6.08991 1.56905 6.06604 1.67928 6.01967C1.7895 5.9733 1.88966 5.90533 1.97402 5.81965L4.05761 3.70344L4.05746 10.7047C4.05745 10.9495 4.15318 11.1842 4.32358 11.3573C4.49398 11.5304 4.7251 11.6277 4.96609 11.6277C5.20708 11.6277 5.4382 11.5304 5.60861 11.3574C5.77902 11.1843 5.87476 10.9495 5.87476 10.7048L5.87492 3.70348L7.95841 5.81978C8.0426 5.90579 8.1427 5.97404 8.25295 6.02061C8.3632 6.06719 8.48142 6.09117 8.60083 6.09117C8.72023 6.09117 8.83846 6.0672 8.94871 6.02063C9.05896 5.97406 9.15906 5.90581 9.24325 5.81981C9.4136 5.64674 9.5093 5.41204 9.50931 5.16732C9.50931 4.92259 9.41362 4.68788 9.24328 4.5148L4.96635 0.170516Z"
-                  fill="#C5C1C1"
+                  fill="#16a34a"
                 />
               </svg>
-              <span className="text-sm font-semibold text-[#c5c1c1]">Income</span>
+              <span className="text-sm font-semibold text-[#16a34a]">Income</span>
             </div>
-            <p className="text-sm font-semibold text-[#3aa233]">Rp{totalIncome.toLocaleString()}</p>
+            <p className="text-lg font-bold text-[#16a34a] transition-all duration-300 group-hover:scale-110">+Rp{totalIncome.toLocaleString()}</p>
+            <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-[#16a34a] to-[#22c55e] transition-all duration-500 rounded-b-xl"></div>
           </div>
 
           {/* Expense Card */}
-          <div className="bg-[#e3efe3] rounded-[10px] p-4 flex flex-col items-center justify-center h-[124px]">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-gradient-to-br from-[#fecaca] to-[#fca5a5] rounded-xl p-4 flex flex-col items-center justify-center h-[124px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-slideUp cursor-pointer group" style={{ animationDelay: '0.2s' }}>
+            <div className="flex items-center gap-2 mb-2 group-hover:scale-110 transition-transform duration-300">
               <svg
                 width={22}
                 height={22}
                 viewBox="0 0 22 22"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-[21.01px] h-[21.01px]"
+                className="w-[21.01px] h-[21.01px] group-hover:animate-bounce"
               >
                 <path
                   d="M12.1326 16.8808L8.01545 12.7606C7.93424 12.6794 7.86983 12.5829 7.82591 12.4767C7.78198 12.3706 7.75939 12.2568 7.75943 12.1419C7.75948 12.027 7.78215 11.9133 7.82615 11.8071C7.87016 11.701 7.93464 11.6046 8.01591 11.5234C8.09717 11.4422 8.19364 11.3778 8.2998 11.3338C8.40596 11.2899 8.51974 11.2673 8.63462 11.2674C8.74951 11.2674 8.86327 11.2901 8.9694 11.3341C9.07553 11.3781 9.17195 11.4426 9.25316 11.5238L11.2588 13.5309L11.2612 6.89319C11.2613 6.66113 11.3536 6.4386 11.5177 6.27457C11.6819 6.11053 11.9045 6.01843 12.1366 6.01851C12.3686 6.0186 12.5911 6.11087 12.7552 6.27502C12.9192 6.43918 13.0113 6.66177 13.0112 6.89383L13.0088 13.5316L15.0159 11.5259C15.097 11.4444 15.1934 11.3798 15.2996 11.3357C15.4058 11.2915 15.5196 11.2689 15.6346 11.2689C15.7496 11.2689 15.8634 11.2917 15.9696 11.3359C16.0757 11.3801 16.1721 11.4448 16.2532 11.5264C16.4171 11.6905 16.5092 11.9131 16.5091 12.1451C16.509 12.3771 16.4168 12.5996 16.2527 12.7637L12.1326 16.8808Z"
-                  fill="#C5C1C1"
+                  fill="#dc2626"
                 />
               </svg>
-              <span className="text-sm font-semibold text-[#c5c1c1]">Expense</span>
+              <span className="text-sm font-semibold text-[#dc2626]">Expense</span>
             </div>
-            <p className="text-sm font-semibold text-[#e65252]">Rp{totalExpense.toLocaleString()}</p>
+            <p className="text-lg font-bold text-[#dc2626] transition-all duration-300 group-hover:scale-110">-Rp{totalExpense.toLocaleString()}</p>
+            <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-[#dc2626] to-[#ef4444] transition-all duration-500 rounded-b-xl"></div>
           </div>
         </div>
 
         {/* Bottom Section - Budget, Welcome, Calendar */}
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar - Budget Section */}
-          <aside className="w-full lg:w-[263px] flex flex-col gap-6">
+          <aside className="w-full lg:w-[263px] flex flex-col gap-6 animate-slideInLeft">
             {/* Budget Card with Bear */}
-            <div className="bg-[#94c2da] rounded-[10px] p-6 relative">
+            <div className="bg-[#94c2da] rounded-[10px] p-6 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group cursor-pointer">
               <div className="flex flex-col gap-5">
                 {/* Bear Image */}
                 <img
                   src="/homepage.svg"
                   alt="Save Money"
-                  className="w-[90px] h-[90px] object-cover absolute -top-2 -right-2 z-10"
+                  className="w-[90px] h-[90px] object-cover absolute -top-2 -right-2 z-10 group-hover:animate-bounce"
                 />
                 
                 <div className="pt-4 relative z-20">
-                  <p className="text-sm font-semibold text-[#efe]">
+                  <p className="text-sm font-semibold text-[#efe] group-hover:scale-105 transition-transform">
                     Anggaran {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                   </p>
                   
@@ -758,57 +770,61 @@ const Homepage = () => {
                   <div className="mt-4">
                     <div className="w-full h-[7px] rounded-[60px] bg-[#e2e2e2] overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-[#e84797] to-[#ff6b9d] transition-all duration-500 ease-out rounded-[60px]"
+                        className="h-full bg-gradient-to-r from-[#e84797] to-[#ff6b9d] transition-all duration-500 ease-out rounded-[60px] group-hover:animate-shimmer"
                         style={{ width: `${expensePercentage}%` }}
                       ></div>
                     </div>
                     
                     {/* Budget Details */}
-                    <div className="mt-3 space-y-1">
-                      <div className="flex justify-between items-center text-xs">
+                    <div className="mt-3 space-y-1 animate-fadeIn">
+                      <div className="flex justify-between items-center text-xs group-hover:scale-105 transition-transform">
                         <span className="text-[#efe] opacity-90">Income:</span>
                         <span className="text-[#efe] font-medium">Rp{monthlyIncome.toLocaleString()}</span>
                       </div>
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-xs group-hover:scale-105 transition-transform">
                         <span className="text-[#efe] opacity-90">Expense:</span>
                         <span className="text-[#efe] font-medium">Rp{monthlyExpense.toLocaleString()}</span>
                       </div>
-                      <div className="flex justify-between items-center text-xs border-t border-[#7db3d4] pt-1 mt-2">
+                      <div className="flex justify-between items-center text-xs border-t border-[#7db3d4] pt-1 mt-2 group-hover:scale-105 transition-transform">
                         <span className="text-[#efe] opacity-90">Usage:</span>
                         <span className="text-[#efe] font-medium">{expensePercentage.toFixed(1)}%</span>
                       </div>
                     </div>
                   </div>
                   
-                  <p className={`text-sm mt-4 font-semibold ${total >= 0 ? 'text-[#efe]' : 'text-[#ffcccb]'}`}>
+                  <p className={`text-sm mt-4 font-semibold group-hover:scale-105 transition-transform ${total >= 0 ? 'text-[#efe]' : 'text-[#ffcccb]'}`}>
                     Sisa Budget Rp{total.toLocaleString()}
                   </p>
-                  <Link to="/budget" className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-4 hover:bg-[#d63d87] transition-colors">
+                  <Link to="/budget" className="w-[109px] h-8 bg-[#e84797] rounded-[10px] flex items-center justify-center mt-4 hover:bg-[#d63d87] transition-all hover:scale-105 hover:shadow-lg">
                     <span className="text-sm font-medium text-[#efe]">Edit Budget</span>
                   </Link>
                 </div>
               </div>
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer rounded-[10px] pointer-events-none"></div>
             </div>
 
             {/* Additional Budget Card */}
-            <div className="bg-[#94c2da] rounded-[10px] h-[168px]"></div>
+            <div className="bg-gradient-to-br from-[#94c2da] to-[#7db3d4] rounded-[10px] h-[168px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-slideInLeft" style={{ animationDelay: '0.2s' }}></div>
           </aside>
 
           {/* Center Content - Welcome Section */}
-          <div className="flex-1">
-            <div className="bg-gradient-to-b from-[#e7a0cc] to-[#fffcfe] rounded-[10px] p-8 relative">
-              <div className="flex flex-col items-center justify-center text-center">
-                <h2 className="text-4xl font-bold text-[#383838] mb-4">Welcome to MoneySafe</h2>
-                <p className="text-sm text-[#383838] max-w-[407px]">
+          <div className="flex-1 animate-scaleIn" style={{ animationDelay: '0.1s' }}>
+            <div className="bg-gradient-to-b from-[#e7a0cc] to-[#fffcfe] rounded-[10px] p-8 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group overflow-hidden">
+              <div className="flex flex-col items-center justify-center text-center relative z-10">
+                <h2 className="text-4xl font-bold text-[#383838] mb-4 group-hover:scale-110 transition-transform animate-slideDown">
+                  🎉 Welcome to MoneySafe
+                </h2>
+                <p className="text-sm text-[#383838] max-w-[407px] group-hover:scale-105 transition-transform animate-fadeIn">
                   "Let's start taking control of your finances today. Your first entry is just one click away!"
                 </p>
               </div>
 
               {/* Add First Expense Button */}
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-6 relative z-10">
                 <button 
                   onClick={handleAddTransaction}
-                  className="bg-[#4e7cb2] rounded-[10px] px-6 py-3 flex items-center gap-2 hover:bg-[#3e6ca2] transition-colors transform hover:scale-105"
+                  className="bg-[#4e7cb2] rounded-[10px] px-6 py-3 flex items-center gap-2 hover:bg-[#3e6ca2] transition-all transform hover:scale-110 hover:shadow-xl group/btn animate-bounce-slow"
                 >
                   <svg
                     width={24}
@@ -816,7 +832,7 @@ const Homepage = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
+                    className="w-6 h-6 group-hover/btn:rotate-90 transition-transform duration-300"
                   >
                     <path
                       d="M18 12.998H13V17.998C13 18.2633 12.8946 18.5176 12.7071 18.7052C12.5196 18.8927 12.2652 18.998 12 18.998C11.7348 18.998 11.4804 18.8927 11.2929 18.7052C11.1054 18.5176 11 18.2633 11 17.998V12.998H6C5.73478 12.998 5.48043 12.8927 5.29289 12.7052C5.10536 12.5176 5 12.2633 5 11.998C5 11.7328 5.10536 11.4785 5.29289 11.2909C5.48043 11.1034 5.73478 10.998 6 10.998H11V5.99805C11 5.73283 11.1054 5.47848 11.2929 5.29094C11.4804 5.1034 11.7348 4.99805 12 4.99805C12.2652 4.99805 12.5196 5.1034 12.7071 5.29094C12.8946 5.47848 13 5.73283 13 5.99805V10.998H18C18.2652 10.998 18.5196 11.1034 18.7071 11.2909C18.8946 11.4785 19 11.7328 19 11.998C19 12.2633 18.8946 12.5176 18.7071 12.7052C18.5196 12.8927 18.2652 12.998 18 12.998Z"
@@ -826,33 +842,36 @@ const Homepage = () => {
                   <span className="text-base font-bold text-[#efe]">Add Transaction</span>
                 </button>
               </div>
+              
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer rounded-[10px] pointer-events-none"></div>
             </div>
           </div>
 
           {/* Right Sidebar - Calendar */}
-          <aside className="w-full lg:w-[312px]">
-            <div className="bg-[#94c2da] rounded-[10px] p-4 h-[350px]">
+          <aside className="w-full lg:w-[312px] animate-slideInRight" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-[#94c2da] rounded-[10px] p-4 h-[350px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group">
               <div className="flex flex-col h-full">
                 {/* Calendar Header */}
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 group-hover:scale-105 transition-transform">
                   <button 
                     onClick={() => navigateMonth(-1)}
-                    className="p-1 hover:bg-[#7db3d4] rounded transition-colors"
+                    className="p-1 hover:bg-[#7db3d4] rounded transition-all hover:scale-110"
                   >
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M7.5 9L4.5 6L7.5 3" stroke="#efe" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
                   
-                  <div className="bg-[#e84797] rounded px-3 py-1">
+                  <div className="bg-[#e84797] rounded px-3 py-1 shadow-md hover:shadow-lg hover:scale-110 transition-all">
                     <span className="text-[11px] text-[#e2e2e2] font-medium">
-                      {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                      📅 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                     </span>
                   </div>
                   
                   <button 
                     onClick={() => navigateMonth(1)}
-                    className="p-1 hover:bg-[#7db3d4] rounded transition-colors"
+                    className="p-1 hover:bg-[#7db3d4] rounded transition-all hover:scale-110"
                   >
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M4.5 3L7.5 6L4.5 9" stroke="#efe" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -861,7 +880,7 @@ const Homepage = () => {
                 </div>
 
                 {/* Days of Week */}
-                <div className="grid grid-cols-7 gap-1 mb-2 text-center">
+                <div className="grid grid-cols-7 gap-1 mb-2 text-center animate-fadeIn">
                   <span className="text-[11px] text-[#efe] font-medium">Mo</span>
                   <span className="text-[11px] text-[#efe] font-medium">Tu</span>
                   <span className="text-[11px] text-[#efe] font-medium">We</span>
@@ -883,27 +902,27 @@ const Homepage = () => {
                     const dayHasTransactions = hasTransactions(day);
                     
                     return (
-                      <div key={index} className="flex items-center justify-center relative">
+                      <div key={index} className="flex items-center justify-center relative group/day">
                         <button
                           onClick={() => handleDateClick(day)}
-                          className="relative w-6 h-6 flex items-center justify-center hover:bg-[#7db3d4] rounded transition-colors"
+                          className="relative w-6 h-6 flex items-center justify-center hover:bg-[#7db3d4] rounded transition-all hover:scale-125 hover:shadow-md"
                         >
                           {isToday ? (
-                            <div className="bg-[#e84797] rounded w-6 h-6 flex items-center justify-center">
+                            <div className="bg-[#e84797] rounded w-6 h-6 flex items-center justify-center animate-pulse-slow shadow-md">
                               <span className="text-[11px] text-[#e2e2e2] font-medium">{day}</span>
                             </div>
                           ) : (
                             <span className={`text-[11px] font-medium ${
                               isWeekend ? 'text-[#203f9a]' : 'text-[#efe]'
-                            }`}>
+                            } group-hover/day:scale-125 transition-transform`}>
                               {day}
                             </span>
                           )}
                           
                           {/* Transaction indicator */}
                           {dayHasTransactions && (
-                            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
-                              <div className="w-1 h-1 bg-[#ffe066] rounded-full"></div>
+                            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 group-hover/day:scale-150 transition-transform">
+                              <div className="w-1 h-1 bg-[#ffe066] rounded-full animate-pulse-slow shadow-sm"></div>
                             </div>
                           )}
                         </button>
@@ -912,20 +931,12 @@ const Homepage = () => {
                   })}
                 </div>
               </div>
+              {/* Shimmer effect on calendar hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer rounded-[10px] pointer-events-none"></div>
             </div>
           </aside>
         </div>
       </main>
-
-      {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex justify-around">
-          <Link to="/homepage" className="text-base font-bold text-[#383838]">Home</Link>
-          <Link to="/chart" className="text-base font-bold text-[#787575]">Chart</Link>
-          <Link to="/budget" className="text-base font-bold text-[#787575]">Budget</Link>
-          <Link to="/wishlist" className="text-base font-bold text-[#787575]">Wishlist</Link>
-        </div>
-      </nav>
 
       {/* Add Transaction Modal */}
       {showAddTransactionModal && (

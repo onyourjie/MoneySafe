@@ -1,26 +1,22 @@
 import { Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { listenAuth } from "../lib/authService";
+import { useAuthStore } from "../stores";
 
 export default function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = listenAuth((currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const { isAuthenticated, loading } = useAuthStore();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#eeffee]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#e84797] mx-auto mb-4"></div>
+          <p className="text-[#383838] font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!user) {
-    return <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   return children;

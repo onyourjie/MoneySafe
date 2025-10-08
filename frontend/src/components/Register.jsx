@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { updateProfile, sendEmailVerification } from "firebase/auth";
 import { getFirebaseAuth } from "../lib/firebase";
-import { registerUser, signInWithGoogle } from "../lib/authService";
+import { useAuthStore } from "../stores";
 import Swal from 'sweetalert2';
 
 export default function Register() {
   const navigate = useNavigate();
   const auth = getFirebaseAuth();
+
+  // Zustand store
+  const { register: registerAction, signInWithGoogle: googleSignIn, loading } = useAuthStore();
 
   const [form, setForm] = useState({ 
     name: "", 
@@ -15,7 +18,6 @@ export default function Register() {
     password: "", 
     confirmPassword: "" 
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Check if Firebase is configured
@@ -126,60 +128,77 @@ export default function Register() {
       return;
     }
 
-    setLoading(true);
     try {
-      const credential = await registerUser(form.email, form.password);
+      // Use Zustand register action
+      const result = await registerAction(form.email, form.password, form.name);
       
-      // Update profile with display name
-      if (form.name.trim()) {
-        await updateProfile(credential.user, { 
-          displayName: form.name.trim() 
+      if (result.success) {
+        // Update profile with display name
+        if (form.name.trim() && result.user) {
+          await updateProfile(result.user, { 
+            displayName: form.name.trim() 
+          });
+        }
+
+        // Send email verification (optional)
+        try {
+          if (result.user) {
+            await sendEmailVerification(result.user);
+          }
+        } catch (emailError) {
+          console.log("Email verification failed:", emailError);
+        }
+
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful!',
+          text: `Welcome to MoneySafe, ${form.name}!`,
+          confirmButtonColor: '#e84797',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__bounceIn'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__bounceOut'
+          }
+        });
+
+        // Navigate to homepage
+        navigate("/homepage", { replace: true });
+      } else {
+        // Handle error from Zustand
+        const firebaseError = result.error;
+        let errorMessage = "Registration failed. Please try again.";
+        
+        if (firebaseError?.code === "auth/email-already-in-use") {
+          errorMessage = "This email is already registered. Please use a different email.";
+        } else if (firebaseError?.code === "auth/invalid-email") {
+          errorMessage = "Please enter a valid email address.";
+        } else if (firebaseError?.code === "auth/weak-password") {
+          errorMessage = "Password is too weak. Please use a stronger password.";
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: errorMessage,
+          confirmButtonColor: '#e84797',
+          showClass: {
+            popup: 'animate__animated animate__shakeX'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+          }
         });
       }
-
-      // Send email verification (optional)
-      try {
-        await sendEmailVerification(credential.user);
-      } catch (emailError) {
-        console.log("Email verification failed:", emailError);
-      }
-
-      // Show success message
-      Swal.fire({
-        icon: 'success',
-        title: 'Registration Successful!',
-        text: `Welcome to MoneySafe, ${form.name}!`,
-        confirmButtonColor: '#e84797',
-        timer: 2000,
-        showConfirmButton: false,
-        showClass: {
-          popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__bounceOut'
-        }
-      });
-
-      // Navigate to homepage
-      navigate("/homepage", { replace: true });
-    } catch (firebaseError) {
-      console.error("Registration error:", firebaseError);
-      
-      // Handle specific Firebase errors
-      let errorMessage = "Registration failed. Please try again.";
-      
-      if (firebaseError.code === "auth/email-already-in-use") {
-        errorMessage = "This email is already registered. Please use a different email.";
-      } else if (firebaseError.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address.";
-      } else if (firebaseError.code === "auth/weak-password") {
-        errorMessage = "Password is too weak. Please use a stronger password.";
-      }
-      
+    } catch (error) {
+      console.error("Registration error:", error);
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
-        text: errorMessage,
+        text: 'An unexpected error occurred. Please try again.',
         confirmButtonColor: '#e84797',
         showClass: {
           popup: 'animate__animated animate__shakeX'
@@ -188,51 +207,65 @@ export default function Register() {
           popup: 'animate__animated animate__fadeOut'
         }
       });
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
     setError("");
     
     try {
-      await signInWithGoogle();
+      // Use Zustand Google sign in action
+      const result = await googleSignIn();
       
-      // Show success message
-      Swal.fire({
-        icon: 'success',
-        title: 'Welcome!',
-        text: 'Google registration successful!',
-        confirmButtonColor: '#e84797',
-        timer: 2000,
-        showConfirmButton: false,
-        showClass: {
-          popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__bounceOut'
+      if (result.success) {
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Welcome!',
+          text: 'Google registration successful!',
+          confirmButtonColor: '#e84797',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__bounceIn'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__bounceOut'
+          }
+        });
+        
+        // Navigate to homepage
+        navigate("/homepage", { replace: true });
+      } else {
+        // Handle error from Zustand
+        const googleError = result.error;
+        let errorMessage = "Google login failed. Please try again.";
+        
+        if (googleError?.code === "auth/popup-closed-by-user") {
+          errorMessage = "Login cancelled by user.";
+        } else if (googleError?.code === "auth/popup-blocked") {
+          errorMessage = "Popup blocked. Please allow popups for this site.";
         }
-      });
-      
-      // Navigate to homepage
-      navigate("/homepage", { replace: true });
-    } catch (googleError) {
-      console.error("Google login error:", googleError);
-      
-      let errorMessage = "Google login failed. Please try again.";
-      
-      if (googleError.code === "auth/popup-closed-by-user") {
-        errorMessage = "Login cancelled by user.";
-      } else if (googleError.code === "auth/popup-blocked") {
-        errorMessage = "Popup blocked. Please allow popups for this site.";
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: errorMessage,
+          confirmButtonColor: '#e84797',
+          showClass: {
+            popup: 'animate__animated animate__shakeX'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+          }
+        });
       }
-      
+    } catch (error) {
+      console.error("Google login error:", error);
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
-        text: errorMessage,
+        text: 'An unexpected error occurred. Please try again.',
         confirmButtonColor: '#e84797',
         showClass: {
           popup: 'animate__animated animate__shakeX'
@@ -241,8 +274,6 @@ export default function Register() {
           popup: 'animate__animated animate__fadeOut'
         }
       });
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import Homepage from "./components/Homepage"
 import Register from "./components/Register"
 import Login from "./components/Login"
@@ -9,26 +9,23 @@ import Chart from "./components/chart"
 import Wishlist from "./components/Wishlist"
 import Budget from "./components/Budget"
 import ProtectedRoute from "./components/ProtectedRoute"
-import { listenAuth } from "./lib/authService"
+import { useAuthStore } from "./stores"
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const { isAuthenticated, initializeAuth } = useAuthStore();
 
   useEffect(() => {
-    const unsubscribe = listenAuth((currentUser) => {
-      setUser(currentUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
+    const unsubscribe = initializeAuth();
+    return () => unsubscribe && unsubscribe();
+  }, [initializeAuth]);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/homepage" /> : <Landingpage />} />
-        <Route path="/landingpage" element={user ? <Navigate to="/homepage" /> : <Landingpage />} />
-        <Route path="/register" element={user ? <Navigate to="/homepage" /> : <Register />} />
-        <Route path="/login" element={user ? <Navigate to="/homepage" /> : <Login />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/homepage" /> : <Landingpage />} />
+        <Route path="/landingpage" element={isAuthenticated ? <Navigate to="/homepage" /> : <Landingpage />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/homepage" /> : <Register />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/homepage" /> : <Login />} />
         <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
         <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
         <Route path="/chart" element={<ProtectedRoute><Chart /></ProtectedRoute>} />

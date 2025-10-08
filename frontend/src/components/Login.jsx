@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser, resetPassword, signInWithGoogle } from "../lib/authService";
+import { resetPassword } from "../lib/authService";
+import { useAuthStore } from "../stores";
 import Swal from 'sweetalert2';
 
 export default function Login() {
   const navigate = useNavigate();
+  
+  // Zustand store
+  const { login, signInWithGoogle: googleSignIn, loading } = useAuthStore();
 
   const [form, setForm] = useState({ 
     email: "", 
     password: "" 
   });
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const onChange = (e) => {
@@ -70,43 +73,60 @@ export default function Login() {
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
     setError("");
     
     try {
-      await signInWithGoogle();
-      // Show success message
-      Swal.fire({
-        icon: 'success',
-        title: 'Welcome!',
-        text: 'Google login successful!',
-        confirmButtonColor: '#e84797',
-        timer: 2000,
-        showConfirmButton: false,
-        showClass: {
-          popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__bounceOut'
+      // Use Zustand Google sign in action
+      const result = await googleSignIn();
+      
+      if (result.success) {
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Welcome!',
+          text: 'Google login successful!',
+          confirmButtonColor: '#e84797',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__bounceIn'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__bounceOut'
+          }
+        });
+        // Navigate to homepage
+        navigate("/homepage", { replace: true });
+      } else {
+        // Handle error from Zustand
+        const googleError = result.error;
+        let errorMessage = "Google login failed. Please try again.";
+        
+        if (googleError?.code === 'auth/popup-closed-by-user') {
+          errorMessage = "Login cancelled by user";
+        } else if (googleError?.code === 'auth/network-request-failed') {
+          errorMessage = "Network error. Please check your connection.";
         }
-      });
-      // Navigate to homepage
-      navigate("/homepage", { replace: true });
-    } catch (googleError) {
-      console.error("Google login error:", googleError);
-      
-      let errorMessage = "Google login failed. Please try again.";
-      
-      if (googleError.code === 'auth/popup-closed-by-user') {
-        errorMessage = "Login cancelled by user";
-      } else if (googleError.code === 'auth/network-request-failed') {
-        errorMessage = "Network error. Please check your connection.";
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: errorMessage,
+          confirmButtonColor: '#e84797',
+          showClass: {
+            popup: 'animate__animated animate__shakeX'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+          }
+        });
       }
-      
+    } catch (error) {
+      console.error("Google login error:", error);
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: errorMessage,
+        text: 'An unexpected error occurred. Please try again.',
         confirmButtonColor: '#e84797',
         showClass: {
           popup: 'animate__animated animate__shakeX'
@@ -115,8 +135,6 @@ export default function Login() {
           popup: 'animate__animated animate__fadeOut'
         }
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -156,48 +174,63 @@ export default function Login() {
       return;
     }
 
-    setLoading(true);
     try {
-      await loginUser(form.email, form.password);
+      // Use Zustand login action
+      const result = await login(form.email, form.password);
       
-      // Show success message
-      Swal.fire({
-        icon: 'success',
-        title: 'Welcome Back!',
-        text: 'Login successful!',
-        confirmButtonColor: '#e84797',
-        timer: 2000,
-        showConfirmButton: false,
-        showClass: {
-          popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__bounceOut'
+      if (result.success) {
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Welcome Back!',
+          text: 'Login successful!',
+          confirmButtonColor: '#e84797',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__bounceIn'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__bounceOut'
+          }
+        });
+        
+        // Navigate to homepage
+        navigate("/homepage", { replace: true });
+      } else {
+        // Handle error from Zustand
+        const firebaseError = result.error;
+        let errorMessage = "Login failed. Please try again.";
+        
+        if (firebaseError?.code === "auth/user-not-found") {
+          errorMessage = "No account found with this email address.";
+        } else if (firebaseError?.code === "auth/wrong-password") {
+          errorMessage = "Incorrect password. Please try again.";
+        } else if (firebaseError?.code === "auth/invalid-email") {
+          errorMessage = "Please enter a valid email address.";
+        } else if (firebaseError?.code === "auth/user-disabled") {
+          errorMessage = "This account has been disabled.";
         }
-      });
-      
-      // Navigate to homepage
-      navigate("/homepage", { replace: true });
-    } catch (firebaseError) {
-      console.error("Login error:", firebaseError);
-      
-      // Handle specific Firebase errors
-      let errorMessage = "Login failed. Please try again.";
-      
-      if (firebaseError.code === "auth/user-not-found") {
-        errorMessage = "No account found with this email address.";
-      } else if (firebaseError.code === "auth/wrong-password") {
-        errorMessage = "Incorrect password. Please try again.";
-      } else if (firebaseError.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address.";
-      } else if (firebaseError.code === "auth/user-disabled") {
-        errorMessage = "This account has been disabled.";
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: errorMessage,
+          confirmButtonColor: '#e84797',
+          showClass: {
+            popup: 'animate__animated animate__shakeX'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+          }
+        });
       }
-      
+    } catch (error) {
+      console.error("Login error:", error);
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: errorMessage,
+        text: 'An unexpected error occurred. Please try again.',
         confirmButtonColor: '#e84797',
         showClass: {
           popup: 'animate__animated animate__shakeX'
@@ -206,8 +239,6 @@ export default function Login() {
           popup: 'animate__animated animate__fadeOut'
         }
       });
-    } finally {
-      setLoading(false);
     }
   };
 

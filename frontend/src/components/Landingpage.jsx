@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
+import Swal from 'sweetalert2'
+import { useAuthStore } from "../stores"
 
 const Landingpage = () => {
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuthStore()
   const [scrollY, setScrollY] = useState(0)
   const [visibleSections, setVisibleSections] = useState(new Set())
   const sectionRefs = useRef({})
@@ -39,6 +43,69 @@ const Landingpage = () => {
 
   const isVisible = (id) => visibleSections.has(id)
 
+  // ada annimasi lottie nih
+  const showLoginPopup = () => {
+  Swal.fire({
+      title: 'Oops!',
+      html: `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div id="lottie-container" style="width: 250px; height: 250px;"></div>
+          <p style="font-size: 18px; color: #383838; font-weight: 600; margin: 0;">
+            Anda harus login terlebih dahulu!
+          </p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonColor: '#e84797',
+      cancelButtonColor: '#94c2da',
+      confirmButtonText: 'Login Sekarang',
+      cancelButtonText: 'Batal',
+      customClass: {
+        popup: 'rounded-2xl',
+        confirmButton: 'px-6 py-3 rounded-full font-semibold',
+        cancelButton: 'px-6 py-3 rounded-full font-semibold'
+      },
+      background: '#EEFFEE',
+      didOpen: () => {
+        // Load Lottie library and animation
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js';
+        script.onload = () => {
+          if (window.bodymovin) {
+            window.bodymovin.loadAnimation({
+              container: document.getElementById('lottie-container'),
+              renderer: 'svg',
+              loop: true,
+              autoplay: true,
+              path: '/Prepare Food.json'
+            });
+          }
+        };
+        document.head.appendChild(script);
+      },
+      showClass: {
+        popup: 'animate__animated animate__bounceIn animate__faster'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOut'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate('/login');
+      }
+    });
+  };
+
+  // Handle navigation with auth check
+  const handleNavClick = (path, e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      showLoginPopup();
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <div className="bg-[#eeffee] min-h-screen relative overflow-x-hidden">
       {/* Background Elements */}
@@ -62,16 +129,32 @@ const Landingpage = () => {
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-16">
           <div className="flex gap-16">
-            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
+            <a 
+              href="#" 
+              onClick={(e) => handleNavClick('/homepage', e)}
+              className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3 cursor-pointer"
+            >
               Home
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
+            <a 
+              href="#" 
+              onClick={(e) => handleNavClick('/chart', e)}
+              className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3 cursor-pointer"
+            >
               Chart
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
+            <a 
+              href="#" 
+              onClick={(e) => handleNavClick('/budget', e)}
+              className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3 cursor-pointer"
+            >
               Budget
             </a>
-            <a href="#" className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3">
+            <a 
+              href="#" 
+              onClick={(e) => handleNavClick('/wishlist', e)}
+              className="text-[#383838] font-bold text-base transform transition-all duration-300 hover:scale-110 hover:text-[#e84797] hover:rotate-3 cursor-pointer"
+            >
               Wishlist
             </a>
           </div>

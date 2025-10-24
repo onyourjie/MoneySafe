@@ -677,7 +677,7 @@ const Homepage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 md:px-8 lg:px-16 pb-20 md:pb-8">
+      <main className="px-4 md:px-8 lg:px-16 pb-20 md:pb-8 mt-16">
         {/* Stats Cards - Top Section with animations */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {/* Total Card */}
@@ -750,11 +750,11 @@ const Homepage = () => {
         </div>
 
         {/* Bottom Section - Budget, Welcome, Calendar */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 md:gap-5 lg:gap-6">
           {/* Left Sidebar - Budget Section */}
-          <aside className="w-full lg:w-[263px] flex flex-col gap-6 animate-slideInLeft">
+          <aside className="w-full md:col-span-2 flex flex-col gap-6 animate-slideInLeft">
             {/* Budget Card with Bear */}
-            <div className="bg-[#94c2da] rounded-[10px] p-6 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group cursor-pointer">
+            <div className="bg-[#94c2da] rounded-[10px] p-5 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group cursor-pointer flex flex-col h-[280px]">
               <div className="flex flex-col gap-5">
                 {/* Bear Image */}
                 <img
@@ -805,43 +805,40 @@ const Homepage = () => {
               {/* Shimmer effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer rounded-[10px] pointer-events-none"></div>
             </div>
-
-            {/* Additional Budget Card */}
-            <div className="bg-gradient-to-br from-[#94c2da] to-[#7db3d4] rounded-[10px] h-[168px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-slideInLeft" style={{ animationDelay: '0.2s' }}></div>
           </aside>
 
           {/* Center Content - Welcome Section */}
-          <div className="flex-1 animate-scaleIn" style={{ animationDelay: '0.1s' }}>
-            <div className="bg-gradient-to-b from-[#e7a0cc] to-[#fffcfe] rounded-[10px] p-8 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group overflow-hidden">
+          <div className="w-full md:col-span-3 animate-scaleIn" style={{ animationDelay: '0.1s' }}>
+            <div className="bg-gradient-to-b from-[#e7a0cc] to-[#fffcfe] rounded-[10px] p-6 relative shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group overflow-hidden flex flex-col justify-center items-center h-[280px]">
               <div className="flex flex-col items-center justify-center text-center relative z-10">
-                <h2 className="text-4xl font-bold text-[#383838] mb-4 group-hover:scale-110 transition-transform animate-slideDown">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#383838] mb-3 group-hover:scale-110 transition-transform animate-slideDown">
                   🎉 Welcome to MoneySafe
                 </h2>
-                <p className="text-sm text-[#383838] max-w-[407px] group-hover:scale-105 transition-transform animate-fadeIn">
+                <p className="text-xs md:text-sm text-[#383838] max-w-[350px] group-hover:scale-105 transition-transform animate-fadeIn">
                   "Let's start taking control of your finances today. Your first entry is just one click away!"
                 </p>
               </div>
 
               {/* Add First Expense Button */}
-              <div className="flex justify-center mt-6 relative z-10">
+              <div className="flex justify-center mt-4 relative z-10">
                 <button 
                   onClick={handleAddTransaction}
-                  className="bg-[#4e7cb2] rounded-[10px] px-6 py-3 flex items-center gap-2 hover:bg-[#3e6ca2] transition-all transform hover:scale-110 hover:shadow-xl group/btn animate-bounce-slow"
+                  className="bg-[#4e7cb2] rounded-[10px] px-5 py-2.5 flex items-center gap-2 hover:bg-[#3e6ca2] transition-all transform hover:scale-110 hover:shadow-xl group/btn"
                 >
                   <svg
-                    width={24}
-                    height={24}
+                    width={20}
+                    height={20}
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 group-hover/btn:rotate-90 transition-transform duration-300"
+                    className="w-5 h-5 group-hover/btn:rotate-90 transition-transform duration-300"
                   >
                     <path
                       d="M18 12.998H13V17.998C13 18.2633 12.8946 18.5176 12.7071 18.7052C12.5196 18.8927 12.2652 18.998 12 18.998C11.7348 18.998 11.4804 18.8927 11.2929 18.7052C11.1054 18.5176 11 18.2633 11 17.998V12.998H6C5.73478 12.998 5.48043 12.8927 5.29289 12.7052C5.10536 12.5176 5 12.2633 5 11.998C5 11.7328 5.10536 11.4785 5.29289 11.2909C5.48043 11.1034 5.73478 10.998 6 10.998H11V5.99805C11 5.73283 11.1054 5.47848 11.2929 5.29094C11.4804 5.1034 11.7348 4.99805 12 4.99805C12.2652 4.99805 12.5196 5.1034 12.7071 5.29094C12.8946 5.47848 13 5.73283 13 5.99805V10.998H18C18.2652 10.998 18.5196 11.1034 18.7071 11.2909C18.8946 11.4785 19 11.7328 19 11.998C19 12.2633 18.8946 12.5176 18.7071 12.7052C18.5196 12.8927 18.2652 12.998 18 12.998Z"
                       fill="#EEFFEE"
                     />
                   </svg>
-                  <span className="text-base font-bold text-[#efe]">Add Transaction</span>
+                  <span className="text-sm font-bold text-[#efe]">Add Transaction</span>
                 </button>
               </div>
               
@@ -851,8 +848,8 @@ const Homepage = () => {
           </div>
 
           {/* Right Sidebar - Calendar */}
-          <aside className="w-full lg:w-[312px] animate-slideInRight" style={{ animationDelay: '0.2s' }}>
-            <div className="bg-[#94c2da] rounded-[10px] p-4 h-[350px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group">
+          <aside className="w-full md:col-span-2 animate-slideInRight" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-[#94c2da] rounded-[10px] p-4 h-[280px] shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group">
               <div className="flex flex-col h-full">
                 {/* Calendar Header */}
                 <div className="flex justify-between items-center mb-4 group-hover:scale-105 transition-transform">

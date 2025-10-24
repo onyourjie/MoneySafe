@@ -120,7 +120,7 @@ const Wishlist = () => {
     setFormData((prev) => ({ ...prev, file: e.target.files[0] }));
   };
 
-  // ✅ CREATE or UPDATE Wishlist
+  // CREATE or UPDATE Wishlist
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.target || !formData.type || !formData.daily_saving) {
@@ -378,9 +378,9 @@ const Wishlist = () => {
                     </div>
                     <button
                       type="submit"
-                      className="px-20 py-4 bg-[#E84797] rounded-[10px] shadow-md text-[32px] font-bold text-[white]/50 hover:text-[#E84797] hover:bg-white transition-colors"
+                      className="px-20 py-4 bg-[#E84797] rounded-[10px] shadow-md text-[32px] font-bold text-[white] hover:text-[#E84797] hover:bg-white transition-colors"
                     >
-                      Change
+                      Save
                     </button>
                     <div className="relative w-48 h-48">
                       <img src="/babi.png" alt="Piggy bank"/>
